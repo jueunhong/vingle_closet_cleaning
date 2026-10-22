@@ -1,0 +1,1646 @@
+:root {
+  --bg: #fbf8f3;
+  --surface: #ffffff;
+  --text: #1d1b1a;
+  --muted: #6f6a66;
+  --border: #ebe5dc;
+  --primary: #ff5a36;
+  --consign: #ff5a36;
+  --cleanup: #5b6cff;
+  --radius: 20px;
+  --wall: #fdf1ef;
+  --wood: #8a4e2b;
+  --ink: #3a2a20;
+  --game-font: 'Jua', 'Gowun Dodum', system-ui, sans-serif;
+
+  font-family: 'Gowun Dodum', system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+.screen {
+  max-width: 480px;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+h1,
+h2 {
+  font-family: var(--game-font);
+  font-weight: 400;
+  line-height: 1.25;
+  margin: 0;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+.eyebrow {
+  color: var(--primary);
+  font-family: var(--game-font);
+  margin: 0;
+}
+
+.lead,
+.meta,
+.counter {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* buttons */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  font-family: var(--game-font);
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn.primary {
+  background: var(--primary);
+}
+.btn.secondary {
+  background: var(--cleanup);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--muted);
+}
+.btn.consign {
+  background: var(--consign);
+}
+.btn.cleanup {
+  background: var(--cleanup);
+}
+
+/* room */
+/* 게임 화면: 위 HUD + 아래 방이 화면 높이를 꽉 채움 */
+.game {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  /* 맨 위 천장 몰딩 */
+  background: linear-gradient(#fffaf8 0 10px, #f1d3d6 10px 11px, var(--wall) 11px);
+  overflow: hidden;
+}
+
+/* 방(3:4)은 남는 공간에 맞춰 바닥에 붙이고, 남는 위·옆은 벽과 바닥을 이어서 채움 */
+.stage {
+  /* 자식들에서 계산: 방 크기 (3:4, 남는 공간에 맞춤) */
+  --stage-w: min(100cqw, 75cqh);
+  --stage-h: calc(var(--stage-w) * 4 / 3);
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  container-type: size;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.stage-bg {
+  filter: saturate(0.92); /* 방 SVG(RoomScene)와 같은 채도로 맞춰 이음새가 안 보이게 */
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    #e5c19d 0,
+    #efd3b4 calc(var(--stage-h) * 0.375),
+    #fffaf8 calc(var(--stage-h) * 0.375),
+    #fffaf8 calc(var(--stage-h) * 0.3925),
+    var(--wall) calc(var(--stage-h) * 0.3925)
+  );
+}
+
+/* 방 위로 남는 벽: 옷장 윗면(방 높이 3%) 기준으로 소품을 얹음 */
+.stage-top {
+  position: absolute;
+  top: 0;
+  bottom: calc(var(--stage-h) * 0.97);
+  left: 50%;
+  width: var(--stage-w);
+  transform: translateX(-50%);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wall-above {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  overflow: visible;
+}
+
+.room {
+  position: relative;
+  width: var(--stage-w);
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.room-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.closet {
+  filter: saturate(0.92); /* 방 배경과 같은 채도 */
+  position: absolute;
+  left: 3%;
+  top: 3%;
+  width: 60%;
+  height: 64%;
+  padding: 2.4cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6cqw;
+  /* 월넛 원목 + 은은한 나뭇결 */
+  background:
+    repeating-linear-gradient(90deg, rgba(160, 100, 60, 0.07) 0 2px, transparent 2px 9px),
+    linear-gradient(90deg, #e9bb90, #f2cba3 45%, #e3b083);
+  border-radius: 4px;
+  box-shadow: 0 4px 0 #cf9b6c, 0 12px 20px -6px rgba(150, 90, 60, 0.35);
+}
+
+.closet-body {
+  flex: 3;
+  display: flex;
+  gap: 1.4cqw;
+}
+
+/* 따뜻한 조명이 들어간 안쪽 */
+.closet-hang,
+.closet-shelves {
+  position: relative;
+  background: linear-gradient(#fffaf6, #fdeef0 65%, #f8e0e6);
+  box-shadow: inset 0 0 2.4cqw rgba(200, 120, 130, 0.22), inset 0 0 0 1px #cf9b6c;
+}
+
+.closet-hang {
+  flex: 56;
+}
+
+.closet-shelves {
+  flex: 44;
+  display: flex;
+  flex-direction: column;
+}
+
+.closet-led {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.8cqw;
+  background: #fff4d8;
+  box-shadow: 0 0 3cqw 1.6cqw rgba(255, 200, 120, 0.75);
+  z-index: 1;
+}
+
+.shelf {
+  flex: 1;
+  position: relative;
+  border-bottom: 1.4cqw solid #e3ae80;
+  box-shadow: 0 2px 3px rgba(60, 30, 10, 0.3);
+}
+
+.shelf.target,
+.drawer.target {
+  outline: 2px solid #ffd27a;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 12px rgba(255, 210, 122, 0.8);
+}
+
+.shelf.full,
+.drawer.full,
+.closet-rail.full {
+  outline: 2px solid #e5484d;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 12px rgba(229, 72, 77, 0.5);
+}
+
+.shelf:last-child {
+  border-bottom: none;
+  box-shadow: none;
+}
+
+.closet-rail {
+  position: absolute;
+  top: 9%;
+  left: 5%;
+  right: 5%;
+  height: 1cqw;
+  background: linear-gradient(#e9cd8c, #b88d43);
+  border: 1px solid #7d5a26;
+  border-radius: 99px;
+  z-index: 1;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+/* 드래그 중: 봉이 걸 수 있는 곳임을 알려줌 */
+.room.is-dragging .closet-rail {
+  background: #f4d58a;
+  box-shadow: 0 0 0 2px rgba(244, 213, 138, 0.35);
+}
+
+.closet-rail.target {
+  background: #ffe9a8;
+  box-shadow: 0 0 10px 4px rgba(255, 220, 120, 0.8);
+}
+
+.closet-pile {
+  position: absolute;
+  bottom: 0;
+  right: 6%;
+  width: 56%;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.closet-pile span {
+  display: block;
+  height: 3.2cqw;
+  margin-top: -0.4cqw;
+  border: 1.5px solid #3a2a20;
+  border-radius: 4px;
+  transform: rotate(var(--tilt));
+}
+
+.closet-drawers {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8cqw;
+}
+
+/* 서랍: 안쪽은 어두운 원목, 열리면 앞판이 아래로 빠지며 안이 보임 */
+.drawer {
+  position: relative;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: linear-gradient(#b8805c, #c99472);
+  cursor: pointer;
+}
+
+.drawer-front {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#f3cda6, #e9bb8f);
+  border: 1px solid #cf9b6c;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 0 rgba(255, 220, 180, 0.25);
+  transition: transform 0.3s ease-out, box-shadow 0.3s;
+}
+
+.drawer.open {
+  z-index: 1;
+}
+
+/* 위 칸 서랍을 열면 앞판이 아래 칸 서랍 위로 나와 덮음 */
+.drawer:nth-child(-n + 3).open {
+  z-index: 2;
+}
+
+.drawer.open .drawer-front {
+  transform: translateY(45%);
+  box-shadow: inset 0 1px 0 rgba(255, 220, 180, 0.25), 0 4px 6px rgba(40, 20, 5, 0.45);
+}
+
+.drawer-front::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.6cqw;
+  height: 1.6cqw;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 35%, #f3d993, #b08a3e);
+  border-radius: 50%;
+  box-shadow: 0 1px 1px rgba(40, 20, 5, 0.4);
+}
+
+.room-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(40, 25, 15, 0.9);
+  color: #fff;
+  font-family: var(--game-font);
+  font-size: 15px;
+  text-align: center;
+  z-index: 20;
+  animation: fade 0.2s;
+}
+
+.room-item {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(var(--rot));
+  width: 20cqw;
+  height: 20cqw;
+  line-height: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.25));
+  touch-action: none;
+  transition: transform 0.4s, opacity 0.4s, left 0.35s ease-out, top 0.35s ease-out, width 0.3s, height 0.3s;
+}
+
+.room-item.loose {
+  animation: wobble 2.4s ease-in-out infinite;
+  cursor: grab;
+}
+
+/* 개어서 선반·서랍에 넣은 옷 */
+.room-item.shelf,
+.room-item.drawer {
+  z-index: 6; /* 개어 둔 옷은 구겨진 더미보다 앞에 보이게 */
+  width: 16cqw;
+  height: 5.12cqw;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+  cursor: grab;
+}
+
+.room-item.drawer {
+  width: 11cqw;
+  height: 3.52cqw;
+  z-index: 2; /* 열린 서랍(z-index 1) 위에 보이도록 */
+}
+
+.room-item .folded-art {
+  width: 100%;
+  height: 100%;
+}
+
+/* 열린 서랍에 개지 않고 쑤셔 넣은 옷: 삐죽 튀어나온 모습 */
+.room-item.messy {
+  width: 16cqw;
+  height: 16cqw;
+  transform: translate(-50%, -50%) rotate(var(--rot));
+  z-index: 2;
+  cursor: grab;
+  animation: none;
+}
+
+.room-item.messy.tall {
+  height: 22.4cqw;
+}
+
+.room-item.messy .clothing-art {
+  filter: url(#crumple);
+}
+
+/* 서랍 안에 눌려 담긴 부분: 위에서 내려다본 듯 더 납작하게 */
+.drape.stuffed .drape-top {
+  transform: scaleY(0.36);
+}
+
+/* 앞판 밖으로 늘어진 아래쪽: 살짝 짧아지고 쏠림 (잘려 보이지 않게 통째로) */
+.drape.stuffed .drape-bottom {
+  transform-origin: 50% 50%;
+}
+
+.drape.stuffed.spill-left .drape-bottom {
+  transform: scaleY(0.85) skewX(6deg);
+}
+
+.drape.stuffed.spill-right .drape-bottom {
+  transform: scaleY(0.85) skewX(-6deg);
+}
+
+/* 닫힌 서랍 속 옷은 안 보이게 */
+.room-item.stowed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.room-item.dragging {
+  z-index: 5;
+  cursor: grabbing;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1.15);
+  filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.15s;
+  animation: none;
+}
+
+/* 옷걸이에 걸린 옷: 봉에 고리가 닿도록 위쪽 기준으로 배치 */
+.room-item.hung {
+  cursor: grab;
+  width: 26cqw;
+  height: 33cqw;
+  transform: translate(-50%, 0);
+  animation: none;
+  z-index: 2;
+}
+
+.hang-swing,
+.hang-slant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 0;
+}
+
+.hang-swing {
+  animation: swing 1.4s ease-out;
+}
+
+/* 사진처럼 옆으로 비스듬히 걸린 모습 */
+.hang-slant {
+  transform: perspective(60cqw) rotateY(-42deg) rotate(-4deg);
+}
+
+.room-item .hanger {
+  width: 80%;
+  height: 6cqw;
+  flex: none;
+}
+
+.room-item.hung .clothing-art,
+.room-item.hung img {
+  height: 27cqw;
+  margin-top: -2cqw;
+}
+
+/* 코트·원피스 같은 긴 옷 */
+.room-item.loose.tall {
+  height: 28cqw;
+}
+
+.room-item.hung.tall {
+  height: 42cqw;
+}
+
+.room-item.hung.tall .clothing-art {
+  height: 37cqw;
+}
+
+@keyframes swing {
+  0% {
+    transform: rotate(18deg);
+  }
+  25% {
+    transform: rotate(-12deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.room-item img,
+.room-item .clothing-art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 바닥에 널브러진 옷: 돌린 뒤 세로로 눌러 바닥에 누운 원근감 + 구김 */
+.room-item.floor {
+  transform: translate(-50%, -50%) scale(1.12, 0.62) rotate(var(--rot));
+  animation: none;
+  filter: drop-shadow(0 2px 1px rgba(60, 30, 10, 0.35));
+}
+
+.room-item.floor .clothing-art,
+.room-item.bed .clothing-art,
+.room-item.chair .clothing-art {
+  filter: url(#crumple);
+}
+
+/* 침대 위: 이불 위에 눕듯 살짝 눌림 */
+.room-item.bed {
+  transform: translate(-50%, -50%) scale(1.06, 0.76) rotate(var(--rot));
+  animation: none;
+  filter: drop-shadow(0 2px 1px rgba(60, 30, 10, 0.3));
+}
+
+.room-item.bed:hover {
+  transform: translate(-50%, -50%) scale(1.14, 0.82) rotate(var(--rot));
+}
+
+/* 의자 위: 좌석에 걸쳐 앞으로 늘어짐 */
+.room-item.chair {
+  animation: none;
+  filter: drop-shadow(0 3px 2px rgba(60, 30, 10, 0.35));
+}
+
+.room-item.chair:hover {
+  transform: translate(-50%, -50%) rotate(var(--rot)) scale(1.06);
+}
+
+.drape,
+.drape-top,
+.drape-bottom {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.drape {
+  position: relative;
+}
+
+.drape-top,
+.drape-bottom {
+  position: absolute;
+  inset: 0;
+}
+
+/* 접힌 선(가운데) 위쪽은 눕혀서 납작하게 */
+.drape-top {
+  clip-path: inset(0 0 50% 0);
+  transform: scaleY(0.45);
+  transform-origin: 50% 50%;
+}
+
+/* 아래쪽은 모서리 밖으로 늘어져 그늘짐 */
+.drape-bottom {
+  clip-path: inset(50% 0 0 0);
+  filter: brightness(0.86);
+}
+
+.room-item.floor:hover {
+  transform: translate(-50%, -50%) scale(1.22, 0.7) rotate(var(--rot));
+}
+
+/* 옷장 칸 바닥에 구겨져 쌓인 옷 */
+.room-item.pile {
+  transform: translate(-50%, -50%) scale(1.05, 0.55) rotate(var(--rot));
+  animation: none;
+  filter: drop-shadow(0 2px 1px rgba(60, 30, 10, 0.3));
+}
+
+.room-item.pile:hover {
+  transform: translate(-50%, -50%) scale(1.12, 0.6) rotate(var(--rot));
+}
+
+/* 선반 맨 아래 옷: 선반 앞으로 한쪽 끝이 늘어짐 (서랍 쑤셔 넣은 모양과 같은 방식) */
+.room-item.spilled {
+  width: 18cqw;
+  height: 18cqw;
+  transform: translate(-50%, -50%) rotate(var(--rot));
+  animation: none;
+  filter: drop-shadow(0 2px 1px rgba(60, 30, 10, 0.3));
+}
+
+.room-item.spilled.tall {
+  height: 25.2cqw;
+}
+
+.room-item.pile .clothing-art,
+.room-item.spilled .clothing-art {
+  filter: url(#crumple);
+}
+
+.room-item.loose:not(.dragging):not(.floor):not(.bed):not(.chair):not(.pile):not(.spilled):hover {
+  transform: translate(-50%, -50%) rotate(var(--rot)) scale(1.15);
+}
+
+.room-item.gone {
+  opacity: 0;
+  transform: translate(-50%, -160%) rotate(var(--rot)) scale(0.3);
+  pointer-events: none;
+  animation: none;
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+  50% {
+    margin-top: -0.6cqw;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* 옷을 눌렀을 때 뜨는 말풍선 */
+.bubble {
+  position: absolute;
+  width: 62cqw;
+  transform: translate(-50%, calc(-100% - 9cqw));
+  padding: 10px 12px;
+  background: #fffaf2;
+  border: 1.5px solid #4a3324;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(60, 30, 10, 0.25);
+  z-index: 15;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  animation: pop 0.18s ease-out;
+}
+
+.bubble.below {
+  transform: translate(-50%, 9cqw);
+}
+
+/* 꼬리: 옷 쪽을 가리킴 */
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: calc(50% + var(--tail) - 7px);
+  bottom: -8px;
+  width: 12px;
+  height: 12px;
+  background: #fffaf2;
+  border-right: 1.5px solid #4a3324;
+  border-bottom: 1.5px solid #4a3324;
+  transform: rotate(45deg);
+}
+
+/* 방 안으로 밀려 들어간 말풍선은 꼬리가 옷을 못 가리키므로 숨김 */
+.bubble.shifted::after {
+  display: none;
+}
+
+.bubble.below::after {
+  bottom: auto;
+  top: -8px;
+  transform: rotate(225deg);
+}
+
+.bubble-info {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* 실제 상품 사진 썸네일 */
+.bubble-photo {
+  width: 64px;
+  height: 70px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1.5px solid #4a3324;
+  background: #f2f0ec;
+}
+
+.bubble strong {
+  display: block;
+  font-family: var(--game-font);
+  font-weight: 400;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.bubble p {
+  margin: 0;
+}
+
+.bubble .worn {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.bubble-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.bubble-warn {
+  margin-top: 6px !important;
+  padding: 6px 8px;
+  background: #fde8e4;
+  border-radius: 8px;
+  color: #b3261e;
+  font-size: 12px;
+  animation: shake 0.35s;
+}
+
+.chip {
+  flex: 1;
+  padding: 7px 6px;
+  border: none;
+  border-radius: 99px;
+  font-family: var(--game-font);
+  font-size: 13px;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip.consign {
+  background: var(--consign);
+}
+
+.chip.cleanup {
+  background: var(--cleanup);
+}
+
+.chip.bin {
+  background: #5f8f4e;
+}
+
+/* 빙글에 못 맡기는 옷일 때 헌옷수거함 버튼을 강조 */
+.chip.bin.nudge {
+  animation: nudge 0.8s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(95, 143, 78, 0.35);
+}
+
+@keyframes nudge {
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+}
+
+/* game */
+.hud {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 14px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--game-font);
+  color: var(--ink);
+  position: relative;
+  z-index: 5;
+}
+
+.hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-title {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-count {
+  font-size: 18px;
+  padding: 2px 12px;
+  background: #fffaf2;
+  border: 1px solid rgba(138, 78, 43, 0.25);
+  border-radius: 99px;
+  box-shadow: 0 2px 6px rgba(90, 50, 25, 0.1);
+  color: #8a4e2b;
+}
+
+/* 정리 진행도: 리넨 리본 위에 바느질 선, 끝에는 나무 구슬 */
+.progress-soft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 2px 4px;
+}
+
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 13px;
+  color: #6b5444;
+}
+
+.progress-head b {
+  font-family: var(--game-font);
+  font-weight: 400;
+  font-size: 16px;
+  color: #c4683f;
+}
+
+.xp {
+  position: relative;
+  height: 12px;
+  background: #f6eee2;
+  border: 1px solid rgba(138, 78, 43, 0.18);
+  border-radius: 99px;
+  box-shadow: inset 0 1px 2px rgba(90, 50, 25, 0.12);
+}
+
+/* 리본 가운데 바느질 선 */
+.xp::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  border-top: 1.5px dashed rgba(138, 78, 43, 0.28);
+  pointer-events: none;
+}
+
+.xp-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #f3cba9, #e3926f);
+  transition: width 0.8s ease;
+}
+
+.xp-dot {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  background: #fffaf2;
+  border: 1.5px solid rgba(138, 78, 43, 0.35);
+  border-radius: 50%;
+  z-index: 1;
+  transition: background 0.4s, border-color 0.4s;
+}
+
+.xp-dot.on {
+  background: #c4683f;
+  border-color: #fffaf2;
+}
+
+.xp-bead {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 35%, #e0ad7c, #a8683c 70%);
+  border: 2px solid #fffaf2;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(90, 50, 25, 0.3);
+  z-index: 2;
+  transition: left 0.8s ease;
+}
+
+/* 옷장 꽉 참 안내 팝업 */
+.notice-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(40, 25, 15, 0.45);
+  animation: fade 0.2s;
+}
+
+.notice {
+  width: min(100%, 360px);
+  padding: 22px 20px 18px;
+  background: #fffaf2;
+  border: 1px solid rgba(138, 78, 43, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(60, 30, 10, 0.3);
+  text-align: center;
+  word-break: keep-all; /* 한글이 단어 중간에서 끊기지 않게 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: pop 0.25s ease-out;
+}
+
+.notice-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.notice h2 {
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.notice p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #5a4636;
+}
+
+.notice b {
+  color: #c4683f;
+}
+
+.notice .notice-tip {
+  padding: 8px 10px;
+  background: #fbeedd;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+/* 서비스 안내(i) 버튼 */
+.info-btn {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1.5px solid rgba(138, 78, 43, 0.45);
+  border-radius: 50%;
+  background: #fffaf2;
+  color: #8a4e2b;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.chip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip-row .info-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+/* 정산 금액표 */
+.ledger {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.15fr;
+  background: #fffaf2;
+  border: 1px solid rgba(138, 78, 43, 0.25);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(90, 50, 25, 0.1);
+  overflow: hidden;
+}
+
+.ledger > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 4px;
+  gap: 1px;
+  border-left: 1.5px dashed rgba(58, 42, 32, 0.3);
+}
+
+.ledger > div:first-child {
+  border-left: none;
+}
+
+.ledger span {
+  font-size: 12px;
+  color: #6b5444;
+}
+
+.ledger b {
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--ink);
+  animation: tick 0.4s ease-out;
+}
+
+.ledger small {
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 10.5px;
+  color: #8a7666;
+}
+
+.payout-toggle {
+  display: flex;
+  gap: 2px;
+  margin: 1px 0;
+  padding: 2px;
+  background: #f1e6d6;
+  border-radius: 99px;
+}
+
+.payout-toggle button {
+  padding: 1px 5px;
+  border: none;
+  border-radius: 99px;
+  background: transparent;
+  color: #8a7666;
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 9.5px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.payout-toggle button.on {
+  background: #fffaf2;
+  color: #8a4e2b;
+  box-shadow: 0 1px 2px rgba(90, 50, 25, 0.2);
+}
+
+.ledger .ledger-total b.two {
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.ledger .ledger-total {
+  background: #fbeedd;
+}
+
+.ledger .ledger-total b {
+  color: #c4683f;
+  font-size: 19px;
+}
+
+@keyframes tick {
+  0% {
+    transform: scale(1.35);
+    color: #d9481f;
+  }
+}
+
+.brand-badge {
+  display: inline-block;
+  margin: 1px 0 3px;
+  padding: 1px 7px;
+  background: #2f3b5c;
+  color: #fff;
+  border-radius: 99px;
+  font-family: var(--game-font);
+  font-size: 11px;
+}
+
+.brand-badge.new {
+  margin-left: 4px;
+  background: #c4683f;
+}
+
+.brand-badge.fav {
+  margin-left: 4px;
+  background: #d9a441;
+}
+
+.result-money {
+  margin: 0;
+  font-family: var(--game-font);
+  font-size: 20px;
+  color: #d9481f;
+}
+
+.hud-hint {
+  margin: -2px 0 0;
+  align-self: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  padding: 7px 14px;
+  background: #fffaf2;
+  border: 1px solid rgba(138, 78, 43, 0.25);
+  border-radius: 10px;
+  outline: 1.5px dashed rgba(196, 104, 63, 0.55);
+  outline-offset: -5px;
+  box-shadow: 0 2px 6px rgba(90, 50, 25, 0.08);
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 13.5px;
+  color: #6b5444;
+}
+
+/* '남은 옷 n벌'은 크게 */
+.hud-hint b {
+  font-family: var(--game-font);
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.hud .btn {
+  box-shadow: 0 4px 0 #b8381c;
+  animation: pop 0.25s ease-out;
+}
+
+/* result */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.stats div {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.stats strong {
+  font-family: var(--game-font);
+  font-weight: 400;
+  font-size: 28px;
+}
+
+.stats span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.cta-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cta-box p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.cta-box .cta-note {
+  font-size: 13px;
+}
+
+/* ── 타이틀과 맞춘 파스텔 글씨 ──
+   흰 테두리 + 같은 색 은은한 번짐. 색은 --c 로 지정 */
+.hud-count,
+.progress-head b,
+.ledger b,
+.hud-hint b {
+  color: var(--c);
+  -webkit-text-fill-color: currentColor;
+  background: none;
+  filter: none;
+  text-shadow:
+    1.6px 0 #fff, -1.6px 0 #fff, 0 1.6px #fff, 0 -1.6px #fff,
+    1.2px 1.2px #fff, -1.2px 1.2px #fff, 1.2px -1.2px #fff, -1.2px -1.2px #fff,
+    0 0 6px color-mix(in srgb, var(--c) 45%, transparent),
+    0 2px 2px rgba(90, 50, 25, 0.15);
+}
+
+.hud-count {
+  --c: #38b4e6;
+}
+
+.hud-hint b,
+.progress-head b,
+.ledger .ledger-total b {
+  --c: #f2559b;
+  color: var(--c);
+}
+
+.ledger > div:nth-child(1) b {
+  --c: #38b4e6;
+}
+
+.ledger > div:nth-child(2) b {
+  --c: #9b6ef0;
+}
+
+/* 금액이 바뀔 때는 크기만 톡 */
+.ledger b {
+  animation-name: tick-size;
+}
+
+@keyframes tick-size {
+  0% {
+    transform: scale(1.3);
+  }
+}
+
+/* 보조 글씨는 부드러운 갈색 */
+.progress-head span,
+.ledger span,
+.hud-hint span {
+  color: #7a5a4c;
+}
+
+.ledger small {
+  color: #a08578;
+}
+
+/* 핑크 바느질 점선 패치 (타이틀 구름과 같은 톤) */
+.ledger,
+.hud-count,
+.hud-hint {
+  background: #fffdfb;
+  border: 1px solid #f6d3e2;
+  outline: 1.6px dashed #f08cb8;
+  outline-offset: -5px;
+  box-shadow: 0 3px 6px rgba(90, 50, 25, 0.08);
+}
+
+.hud-count {
+  outline-offset: -4px;
+  padding: 3px 14px;
+}
+
+.ledger > div {
+  border-left-color: #f6c9dc;
+}
+
+.ledger .ledger-total {
+  background: #fff3f8;
+}
+
+/* (i) 버튼과 정산 토글도 핑크 톤 */
+.info-btn {
+  border-color: #f08cb8;
+  color: #f2559b;
+  background: #fffdfb;
+}
+
+.payout-toggle {
+  background: #fde8f1;
+}
+
+.payout-toggle button.on {
+  color: #f2559b;
+}
+
+/* 진행 바: 핑크 리본 + 끝에는 노란 별 */
+.xp {
+  background: #fff6fa;
+  border-color: #f6d3e2;
+}
+
+.xp::after {
+  border-top-color: rgba(240, 140, 184, 0.45);
+}
+
+.xp-fill {
+  background: linear-gradient(90deg, #ffc4dc, #f27fb3);
+}
+
+.xp-dot {
+  border-color: #f6b4d0;
+}
+
+.xp-dot.on {
+  background: #38b4e6;
+  border-color: #fff;
+}
+
+.xp-bead {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  filter: drop-shadow(0 2px 2px rgba(90, 50, 25, 0.25));
+}
+
+.xp-bead::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #ffd84a;
+  clip-path: polygon(50% 2%, 62% 36%, 98% 37%, 69% 59%, 79% 95%, 50% 74%, 21% 95%, 31% 59%, 2% 37%, 38% 36%);
+}
+
+/* ── 게임 타이틀 배지: 구름 + 별 + 파스텔 글자 ── */
+.title-badge {
+  position: relative;
+  margin: 0 0 0 4px;
+  padding: 14px 30px 16px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.title-cloud {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 3px 4px rgba(90, 50, 25, 0.15));
+}
+
+.title-text {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+.title-letter {
+  font-family: 'Jua', sans-serif;
+  font-weight: 400;
+  font-size: 31px;
+  line-height: 1;
+  color: var(--c);
+  /* 두꺼운 흰 테두리 + 같은 색 은은한 번짐 */
+  text-shadow:
+    2.5px 0 #fff, -2.5px 0 #fff, 0 2.5px #fff, 0 -2.5px #fff,
+    1.8px 1.8px #fff, -1.8px 1.8px #fff, 1.8px -1.8px #fff, -1.8px -1.8px #fff,
+    0 0 8px color-mix(in srgb, var(--c) 55%, transparent),
+    0 3px 3px rgba(90, 50, 25, 0.18);
+  display: inline-block;
+}
+
+/* 글자가 살짝 통통 튀듯 높낮이 */
+.title-letter:nth-child(odd) {
+  transform: translateY(-1px) rotate(-3deg);
+}
+
+.title-letter:nth-child(even) {
+  transform: translateY(1px) rotate(3deg);
+}
+
+.title-space {
+  width: 9px;
+}
+
+.title-star {
+  position: absolute;
+  filter: drop-shadow(0 2px 2px rgba(90, 50, 25, 0.2));
+}
+
+.title-star.s1 {
+  width: 30px;
+  left: -8px;
+  top: -4px;
+  transform: rotate(-14deg);
+}
+
+.title-star.s2 {
+  width: 26px;
+  right: -8px;
+  bottom: 0;
+  transform: rotate(12deg);
+}
+
+.title-star.s3 {
+  width: 17px;
+  right: 22px;
+  bottom: -8px;
+  transform: rotate(-8deg);
+}
+
+/* ── 잔소리하는 엄마: 오른쪽에서 쑥 ── */
+.mom {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: min(46%, 300px);
+  aspect-ratio: 120 / 200;
+  z-index: 30;
+  pointer-events: none; /* 엄마가 있어도 옷은 계속 만질 수 있게 */
+  animation: mom-in 0.55s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+.mom.leaving {
+  animation: mom-out 0.5s ease-in both;
+}
+
+.mom-art {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(-4px 6px 8px rgba(90, 50, 25, 0.25));
+  transform-origin: 50% 100%;
+  animation: mom-scold 0.5s ease-in-out 0.55s 3;
+}
+
+.mom-bubble {
+  position: absolute;
+  right: 72%;
+  top: 2%;
+  width: max-content;
+  max-width: min(64vw, 300px); /* 긴 대사는 줄바꿈해서 화면 밖으로 안 나가게 */
+  padding: 10px 16px 11px;
+  text-align: center;
+  word-break: keep-all;
+  background: #fffdfb;
+  border: 1px solid #f6d3e2;
+  border-radius: 18px;
+  outline: 1.6px dashed #f08cb8;
+  outline-offset: -5px;
+  box-shadow: 0 4px 10px rgba(90, 50, 25, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--game-font);
+  animation: pop 0.3s ease-out 0.35s both;
+}
+
+.mom-bubble::after {
+  content: '';
+  position: absolute;
+  right: -7px;
+  bottom: 16px;
+  width: 12px;
+  height: 12px;
+  background: #fffdfb;
+  border-right: 1px solid #f6d3e2;
+  border-top: 1px solid #f6d3e2;
+  transform: rotate(45deg);
+}
+
+.mom-bubble b {
+  --c: #f2559b;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--c);
+  text-shadow:
+    1.6px 0 #fff, -1.6px 0 #fff, 0 1.6px #fff, 0 -1.6px #fff,
+    0 0 6px color-mix(in srgb, var(--c) 45%, transparent);
+}
+
+.mom-bubble span {
+  font-size: 15px;
+  color: #7a5a4c;
+}
+
+@keyframes mom-in {
+  from {
+    transform: translateX(110%);
+  }
+}
+
+@keyframes mom-out {
+  to {
+    transform: translateX(110%);
+  }
+}
+
+@keyframes mom-scold {
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+/* ── 폰: 옷이 작아지지 않게 ──
+   방은 항상 화면 폭을 꽉 채우고(세로가 모자라면 살짝 스크롤), 위 HUD는 촘촘하게 */
+@media (max-width: 600px) {
+  .game {
+    height: auto;
+    min-height: 100svh;
+    overflow-x: hidden;
+  }
+
+  /* 방을 화면보다 1.2배 크게 그리고 오른쪽(침대 절반)을 잘라 옷장을 크게 보이게 */
+  .stage {
+    flex: 1 0 auto;
+    container-type: inline-size;
+    overflow: hidden;
+    justify-content: flex-start;
+    --stage-w: calc(100cqw * 1.2);
+    --stage-h: calc(100cqw * 1.2 * 4 / 3);
+  }
+
+  .stage-top {
+    left: 0;
+    transform: none;
+  }
+
+  .room {
+    flex-shrink: 0; /* 화면보다 넓게 그려야 오른쪽이 잘림 */
+  }
+
+  .hud {
+    padding: 8px 12px 8px;
+    gap: 6px;
+  }
+
+  .title-badge {
+    padding: 9px 22px 11px;
+  }
+
+  .title-letter {
+    font-size: 24px;
+  }
+
+  .title-star.s1 {
+    width: 22px;
+  }
+
+  .title-star.s2 {
+    width: 20px;
+  }
+
+  .title-star.s3 {
+    width: 13px;
+  }
+
+  .hud-count {
+    font-size: 15px;
+  }
+
+  .hud-hint {
+    padding: 5px 12px;
+    font-size: 12px;
+  }
+
+  .hud-hint b {
+    font-size: 15px;
+  }
+
+  .progress-soft {
+    gap: 3px;
+  }
+
+  .progress-head {
+    font-size: 12px;
+  }
+
+  .progress-head b {
+    font-size: 14px;
+  }
+
+  .ledger > div {
+    padding: 4px 3px;
+  }
+
+  .ledger b {
+    font-size: 15px;
+  }
+
+  .ledger .ledger-total b {
+    font-size: 16px;
+  }
+
+  .ledger span {
+    font-size: 11px;
+  }
+
+  .info-btn {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+}
