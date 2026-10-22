@@ -3,6 +3,7 @@ import type { ClothingItem } from '../data/clothes'
 import { DRAWER_COUNT, SHELF_COUNT, capacityOf, cleanupAmount, consignBlock, formatPayout, freeSlots, occupants, type Choice, type Payout, type Place, type Storage } from '../game'
 import { ClothingArt, FoldedArt, TALL_KINDS } from './ClothingArt'
 import { RoomScene } from './RoomScene'
+import { assetUrl } from '../config'
 import { InfoButton, type Service } from './ServiceInfo'
 
 interface Props {
@@ -426,7 +427,7 @@ export function Room({ items, places, onMove, onClosetFull, onInfo, payout }: Pr
         const className = ['room-item', mode, tall && 'tall', surface, pile, isDragging && 'dragging', stowed && 'stowed']
           .filter(Boolean)
           .join(' ')
-        const art = item.image ? <img src={item.image} alt="" /> : <ClothingArt kind={item.kind} color={item.color} accent={item.accent} />
+        const art = item.image ? <img src={assetUrl(item.image)} alt="" /> : <ClothingArt kind={item.kind} color={item.color} accent={item.accent} />
 
         return (
           <button
@@ -479,7 +480,7 @@ export function Room({ items, places, onMove, onClosetFull, onInfo, payout }: Pr
             style={{ left: `${left}%`, top: `${ay}%`, marginTop: bubbleShift, '--tail': `${clamp(anchor.x - left, -26, 26)}cqw` } as React.CSSProperties}
           >
             <div className="bubble-info">
-              {item.photo && <img className="bubble-photo" src={item.photo} alt={`${item.name} 실제 사진`} />}
+              {item.photo && <img className="bubble-photo" src={assetUrl(item.photo)} alt={`${item.name} 실제 사진`} />}
               <div>
                 <strong>{item.name}</strong>
                 {item.brand && <span className="brand-badge">🏷 {item.brand}</span>}
